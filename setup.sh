@@ -6,7 +6,7 @@
 #    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/04/11 11:47:48 by user42           ###   ########.fr        #
+#    Updated: 2021/04/11 16:09:07 by user42           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ echo "\033[2J\033[H\033[1;31m\
 |  _| |_    \__ \  __/ |   \ V /| | (_|  __/\__ \\
 |_|  \__|___|___/\___|_|    \_/ |_|\___\___||___/
        |_____|\
-\033[0m"
+\033[0m\n"
 
 # kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/namespace.yaml
 # kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/metallb.yaml
@@ -26,12 +26,26 @@ echo "\033[2J\033[H\033[1;31m\
 # kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 # kubectl expose rc example --port=8765 --target-port=9376 --name=example-service --type=LoadBalancer
 
-function	setup() {
+setup() {
 	for contnr in 'nginx' 'mysql' 'influxdb' 'wordpress' 'phpmyadmin' 'ftps' 'grafana'
 	do
-		docker build -t $contnr ./$contnr
+		echo "Building $contnr..."
+		docker build -t $contnr ./srcs/$contnr
+		echo	
 	done
 }
 
-minikube delete
-minikube start
+if [ `uname` = Linux ]
+then
+	# minikube delete
+	minikube start --driver=docker
+	minikube addons enable metrics-server
+	minikube addons enable dashboard
+	minikube addons enable metallb
+
+	# kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.1/manifests/metallb.yaml
+	# setup
+else
+	echo "The project needs to be run on Linux"
+	echo "Sorry :)"
+fi
