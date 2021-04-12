@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/04/12 16:30:56 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/12 17:02:14 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -46,7 +46,7 @@ install_minikube_cmd() {
 	if [ `uname` = Darwin ]
 	then
 		
-		# check if minikube does not exist
+		# Check if minikube does not exist
 		if [ ! -x `command -v minikube` ]
 		then
 			# check if brew does not exist
@@ -57,13 +57,16 @@ install_minikube_cmd() {
 			fi
 		fi
 
+		# if $MINIKUBE_HOME does not exist in .zshrc, add it
 		if [ -z $MINIKUBE_HOME ]
 		then
-			echo "SETTING UP MINIKUBE_HOME ENV VAR"
-			echo "export MINIKUBE_HOME=/goinfre/$USER/" >> ~/.zshrc
-			source ~/.zshrc
-		fi	
-	fi	
+			grep MINIKUBE_HOME $HOME/.zshrc > /dev/null
+			if [ $? -eq 1 ]
+			then
+				echo "export MINIKUBE_HOME=/goinfre/\$USER/" >> $HOME/.zshrc
+			fi
+		fi
+	fi
 }
 
 
@@ -71,8 +74,8 @@ setup() {
 	for contnr in 'nginx' 'mysql' 'influxdb' 'wordpress' 'phpmyadmin' 'ftps' 'grafana'
 	do
 		echo "# Building $B_RED$contnr...$CLR_COLOR"
-		kubectl create deployment $contnr --image=srcs/$contnr
-		# docker build -t $contnr ./srcs/$contnr
+		docker build -t $contnr ./srcs/$contnr
+		kubectl create deployment $contnr --image=$contnr
 		echo	
 	done
 }
@@ -116,6 +119,10 @@ elif [ $# -eq 1 ] && [ $1 = "services" ]
 then
 	# Launch services
 	setup
+elif [ $# -eq 1 ] && [ $1 = "install" ]
+then
+	# Install minikube
+	install_minikube_cmd
 fi
 
 
@@ -126,5 +133,5 @@ fi
 # kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 # kubectl expose rc example --port=8765 --target-port=9376 --name=example-service --type=LoadBalancer
 
-# Env variable not set yet when exiting
+# Set env variable when exiting
 zsh
