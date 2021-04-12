@@ -6,7 +6,7 @@
 #    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/04/11 16:09:07 by user42           ###   ########.fr        #
+#    Updated: 2021/04/12 12:27:55 by user42           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,9 +35,16 @@ setup() {
 	done
 }
 
-if [ `uname` = Linux ]
+
+if [ `uname` = Darwin ]
 then
-	# minikube delete
+	echo "export MINIKUBE_HOME=/goinfre/$USER/"
+	source ~/.zshrc
+fi
+
+# if [ `uname` = Linux ]
+# then
+	minikube delete
 	minikube start --driver=docker
 	minikube addons enable metrics-server
 	minikube addons enable dashboard
@@ -45,7 +52,9 @@ then
 
 	# kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.1/manifests/metallb.yaml
 	# setup
-else
-	echo "The project needs to be run on Linux"
-	echo "Sorry :)"
-fi
+# else
+# 	echo "export MINIKUBE_HOME=/goinfre/$USER/"
+# 	source ~/.zshrc
+# 	echo "The project needs to be run on Linux"
+# 	echo "Sorry :)"
+# fi
