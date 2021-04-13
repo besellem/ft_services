@@ -34,3 +34,15 @@ spec:
         - name: influxdb-config
           configMap:
             name: influxdb-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: influxdb-service
+spec:
+  selector:
+    app: influxdb
+  ports:
+    - protocol: TCP
+      port: 8086
+      targetPort: 8086

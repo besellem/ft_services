@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/04/13 15:51:52 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/13 16:38:39 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -75,9 +75,16 @@ setup() {
 	do
 		echo "# Building $B_RED$contnr...$CLR_COLOR"
 		docker build -t $contnr ./srcs/$contnr
-		kubectl create deployment $contnr --image=$contnr
 		echo
 	done
+
+	kubectl apply -f srcs/nginx/nginx.yaml
+	kubectl apply -f srcs/nginx/ftps.yaml
+	kubectl apply -f srcs/nginx/grafana.yaml
+	kubectl apply -f srcs/nginx/influxdb.yaml
+	kubectl apply -f srcs/nginx/mysql.yaml
+	kubectl apply -f srcs/nginx/phpmyadmin.yaml
+	kubectl apply -f srcs/nginx/wordpress.yaml	
 }
 
 
@@ -92,20 +99,23 @@ then
 	# Launching minikube
 	if [ `uname` = Darwin ]
 	then
-		minikube start --vm-driver=virtualbox --memory=2g --cpus=2 --extra-config=apiserver.service-node-port-range=1-30000
+		minikube start --vm-driver=virtualbox --memory=2g --cpus=2 --extra-config=apiserver.service-node-port-range=1-35000
 	elif [ `uname` = Linux ]
 	then
-		minikube start --driver=docker --extra-config=apiserver.service-node-port-range=1-30000
+		minikube start --driver=docker --extra-config=apiserver.service-node-port-range=1-35000
 	fi
 
 	minikube addons enable dashboard
+	minikube addons enable ingress
 	minikube addons enable metrics-server
-	minikube addons enable metallb
+	# minikube addons enable metallb
 
 	# kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/namespace.yaml
 	# kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/metallb.yaml
 	# kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 	
+	open http://$(minikube ip)
+
 elif [ $1 = "delete" ]
 then
 	# Delete minikube instances
