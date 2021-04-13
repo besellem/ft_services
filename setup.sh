@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/04/12 17:02:14 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/13 15:51:52 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -76,7 +76,7 @@ setup() {
 		echo "# Building $B_RED$contnr...$CLR_COLOR"
 		docker build -t $contnr ./srcs/$contnr
 		kubectl create deployment $contnr --image=$contnr
-		echo	
+		echo
 	done
 }
 
@@ -89,45 +89,39 @@ then
 	# Install minikueb cmd
 	install_minikube_cmd
 
-	# Delete minikube instances
-	minikube delete
-
 	# Launching minikube
 	if [ `uname` = Darwin ]
 	then
-		minikube start --vm-driver=virtualbox --memory=2g --cpus=2
+		minikube start --vm-driver=virtualbox --memory=2g --cpus=2 --extra-config=apiserver.service-node-port-range=1-30000
 	elif [ `uname` = Linux ]
 	then
-		minikube start --driver=docker
+		minikube start --driver=docker --extra-config=apiserver.service-node-port-range=1-30000
 	fi
 
 	minikube addons enable dashboard
 	minikube addons enable metrics-server
 	minikube addons enable metallb
 
-	# Launching services
-	setup
+	# kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/namespace.yaml
+	# kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/metallb.yaml
+	# kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 	
-elif [ $# -eq 1 ] && [ $1 = "stop" ]
+elif [ $1 = "delete" ]
 then
 	# Delete minikube instances
 	if [ -x `command -v minikube` ]
 	then
 		minikube delete
 	fi
-elif [ $# -eq 1 ] && [ $1 = "services" ]
+elif [ $1 = "services" ]
 then
 	# Launch services
 	setup
-elif [ $# -eq 1 ] && [ $1 = "install" ]
+elif [ $1 = "install" ]
 then
 	# Install minikube
 	install_minikube_cmd
 fi
-
-
-# kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/namespace.yaml
-# kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/metallb.yaml
 
 # On first install only
 # kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
