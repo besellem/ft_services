@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/04/13 16:38:39 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/14 12:28:18 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -74,7 +74,7 @@ setup() {
 	for contnr in 'nginx' 'mysql' 'influxdb' 'wordpress' 'phpmyadmin' 'ftps' 'grafana'
 	do
 		echo "# Building $B_RED$contnr...$CLR_COLOR"
-		docker build -t $contnr ./srcs/$contnr
+		docker build -t svc_$contnr ./srcs/$contnr
 		echo
 	done
 
@@ -116,7 +116,7 @@ then
 	
 	open http://$(minikube ip)
 
-elif [ $1 = "delete" ]
+elif [ $1 = "delete" ] || [ $1 = "stop" ]
 then
 	# Delete minikube instances
 	if [ -x `command -v minikube` ]
