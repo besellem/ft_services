@@ -6,19 +6,14 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/07 09:17:39 by user42            #+#    #+#              #
-#    Updated: 2021/04/14 16:15:36 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/15 15:17:01 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 FROM alpine
 
-# Packages installation
-RUN apk update
-RUN apk add openrc
-RUN apk add openssh
-RUN apk add openssl
-RUN apk add nginx
-RUN apk add telegraf
+RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf \
+	&& apk update && apk add openrc openssh openssl nginx telegraf --no-cache
 
 # Users & Permissions
 RUN adduser -D -g 'www' www

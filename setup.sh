@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/04/14 16:43:13 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/15 15:57:21 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -71,20 +71,24 @@ install_minikube_cmd() {
 
 
 setup() {
-	for contnr in 'nginx'# 'mysql' 'influxdb' 'wordpress' 'phpmyadmin' 'ftps' 'grafana'
+
+	# whitout this cmd, minikube can't found images built locally
+	eval $(minikube docker-env)
+	
+	for contnr in 'nginx'
 	do
 		echo "# Building $B_RED$contnr...$CLR_COLOR"
 		docker build -t svc_$contnr ./srcs/$contnr
 		echo
 	done
 
-	kubectl apply -f srcs/nginx/nginx.yaml
-	# kubectl apply -f srcs/nginx/ftps.yaml
-	# kubectl apply -f srcs/nginx/grafana.yaml
-	# kubectl apply -f srcs/nginx/influxdb.yaml
-	# kubectl apply -f srcs/nginx/mysql.yaml
-	# kubectl apply -f srcs/nginx/phpmyadmin.yaml
-	# kubectl apply -f srcs/nginx/wordpress.yaml	
+	kubectl create -f ./srcs/nginx/nginx.yaml
+	# kubectl create -f ./srcs/ftps/ftps.yaml
+	# kubectl create -f ./srcs/grafana/grafana.yaml
+	# kubectl create -f ./srcs/influxdb/influxdb.yaml
+	# kubectl create -f ./srcs/mysql/mysql.yaml
+	# kubectl create -f ./srcs/phpmyadmin/phpmyadmin.yaml
+	# kubectl create -f ./srcs/wordpress/wordpress.yaml	
 }
 
 
@@ -108,7 +112,7 @@ then
 	minikube addons enable dashboard
 	# minikube addons enable ingress
 	minikube addons enable metrics-server
-	# minikube addons enable metallb
+	minikube addons enable metallb
 
 	# kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/namespace.yaml
 	# kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/metallb.yaml
@@ -124,7 +128,7 @@ then
 		minikube delete
 	fi
 elif [ $1 = "services" ]
-then
+then	
 	# Launch services
 	setup
 elif [ $1 = "install" ]
