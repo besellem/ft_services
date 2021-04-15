@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/04/15 15:57:21 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/15 16:16:28 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,6 +42,7 @@ echo "$CLR_SCREEN$B_RED\
 🖥  - $B_YELLOW"$(uname)$CLR_COLOR "\n"
 
 
+# Install minikube command
 install_minikube_cmd() {
 	if [ `uname` = Darwin ]
 	then
@@ -67,6 +68,35 @@ install_minikube_cmd() {
 			fi
 		fi
 	fi
+}
+
+
+start() {
+	
+	install_minikube_cmd
+
+	# Launching minikube
+	if [ `uname` = Darwin ]
+	then
+		minikube start --vm-driver=virtualbox --memory=2g --cpus=2 --extra-config=apiserver.service-node-port-range=1-35000
+	elif [ `uname` = Linux ]
+	then
+		minikube start --driver=docker --extra-config=apiserver.service-node-port-range=1-35000
+	fi
+
+	minikube addons enable dashboard
+	# minikube addons enable ingress
+	minikube addons enable metrics-server
+	minikube addons enable metallb
+
+	# On first install only
+	# kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+	# kubectl expose rc example --port=8765 --target-port=9376 --name=example-service --type=LoadBalancer
+	# kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/namespace.yaml
+	# kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/metallb.yaml
+	# kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+	
+	# open http://$(minikube ip)
 }
 
 
@@ -96,30 +126,7 @@ setup() {
 # Start / Restart script
 if [ $# -lt 1 ] || [ $1 = "start" ]
 then
-
-	# Install minikueb cmd
-	install_minikube_cmd
-
-	# Launching minikube
-	if [ `uname` = Darwin ]
-	then
-		minikube start --vm-driver=virtualbox --memory=2g --cpus=2 --extra-config=apiserver.service-node-port-range=1-35000
-	elif [ `uname` = Linux ]
-	then
-		minikube start --driver=docker --extra-config=apiserver.service-node-port-range=1-35000
-	fi
-
-	minikube addons enable dashboard
-	# minikube addons enable ingress
-	minikube addons enable metrics-server
-	minikube addons enable metallb
-
-	# kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/namespace.yaml
-	# kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/metallb.yaml
-	# kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
-	
-	# open http://$(minikube ip)
-
+	start
 elif [ $1 = "delete" ] || [ $1 = "stop" ]
 then
 	# Delete minikube instances
@@ -128,7 +135,15 @@ then
 		minikube delete
 	fi
 elif [ $1 = "services" ]
-then	
+then
+
+	# check if minikube is working
+	minikube ip
+	if [ $? -ne 0 ]
+	then
+		start
+	fi
+	
 	# Launch services
 	setup
 elif [ $1 = "install" ]
@@ -136,10 +151,6 @@ then
 	# Install minikube
 	install_minikube_cmd
 fi
-
-# On first install only
-# kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
-# kubectl expose rc example --port=8765 --target-port=9376 --name=example-service --type=LoadBalancer
 
 # Set env variable when exiting
 zsh
