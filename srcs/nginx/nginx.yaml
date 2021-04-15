@@ -17,13 +17,11 @@ spec:
       containers:
       - name: nginx
         image: svc_nginx
-        imagePullPolicy: Never
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: nginx
-  namespace: default
   labels:
     app: nginx
 spec:

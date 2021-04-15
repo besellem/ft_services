@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/04/14 12:28:18 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/14 16:43:13 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -71,7 +71,7 @@ install_minikube_cmd() {
 
 
 setup() {
-	for contnr in 'nginx' 'mysql' 'influxdb' 'wordpress' 'phpmyadmin' 'ftps' 'grafana'
+	for contnr in 'nginx'# 'mysql' 'influxdb' 'wordpress' 'phpmyadmin' 'ftps' 'grafana'
 	do
 		echo "# Building $B_RED$contnr...$CLR_COLOR"
 		docker build -t svc_$contnr ./srcs/$contnr
@@ -79,18 +79,18 @@ setup() {
 	done
 
 	kubectl apply -f srcs/nginx/nginx.yaml
-	kubectl apply -f srcs/nginx/ftps.yaml
-	kubectl apply -f srcs/nginx/grafana.yaml
-	kubectl apply -f srcs/nginx/influxdb.yaml
-	kubectl apply -f srcs/nginx/mysql.yaml
-	kubectl apply -f srcs/nginx/phpmyadmin.yaml
-	kubectl apply -f srcs/nginx/wordpress.yaml	
+	# kubectl apply -f srcs/nginx/ftps.yaml
+	# kubectl apply -f srcs/nginx/grafana.yaml
+	# kubectl apply -f srcs/nginx/influxdb.yaml
+	# kubectl apply -f srcs/nginx/mysql.yaml
+	# kubectl apply -f srcs/nginx/phpmyadmin.yaml
+	# kubectl apply -f srcs/nginx/wordpress.yaml	
 }
 
 
 # If no arg, or first arg equals "start" or "restart":
 # Start / Restart script
-if [ $# -lt 1 ] || [ $1 = "start" ] || [ $1 = "restart" ]
+if [ $# -lt 1 ] || [ $1 = "start" ]
 then
 
 	# Install minikueb cmd
@@ -106,7 +106,7 @@ then
 	fi
 
 	minikube addons enable dashboard
-	minikube addons enable ingress
+	# minikube addons enable ingress
 	minikube addons enable metrics-server
 	# minikube addons enable metallb
 
@@ -114,7 +114,7 @@ then
 	# kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/metallb.yaml
 	# kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 	
-	open http://$(minikube ip)
+	# open http://$(minikube ip)
 
 elif [ $1 = "delete" ] || [ $1 = "stop" ]
 then
