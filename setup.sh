@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/04/15 16:16:28 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/15 17:31:53 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -102,6 +102,8 @@ start() {
 
 setup() {
 
+	SVC_IP=$(minikube ip)
+
 	# whitout this cmd, minikube can't found images built locally
 	eval $(minikube docker-env)
 	
@@ -112,13 +114,15 @@ setup() {
 		echo
 	done
 
+	docker build -t svc_wordpress ./srcs/wordpress --build-arg SERVICE_IP=$SVC_IP
+
 	kubectl create -f ./srcs/nginx/nginx.yaml
 	# kubectl create -f ./srcs/ftps/ftps.yaml
 	# kubectl create -f ./srcs/grafana/grafana.yaml
 	# kubectl create -f ./srcs/influxdb/influxdb.yaml
 	# kubectl create -f ./srcs/mysql/mysql.yaml
 	# kubectl create -f ./srcs/phpmyadmin/phpmyadmin.yaml
-	# kubectl create -f ./srcs/wordpress/wordpress.yaml	
+	kubectl create -f ./srcs/wordpress/wordpress.yaml
 }
 
 
