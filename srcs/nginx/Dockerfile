@@ -6,11 +6,13 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/07 09:17:39 by user42            #+#    #+#              #
-#    Updated: 2021/04/15 17:07:02 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/20 17:16:42 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 FROM alpine:latest
+
+VOLUME /sys/fs/cgroup
 
 RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf \
 	&& apk update && apk add openrc openssh openssl nginx telegraf --no-cache

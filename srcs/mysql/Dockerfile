@@ -1,23 +1,22 @@
-#!/bin/sh
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
 #    Dockerfile                                         :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
+#    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/07 09:17:39 by user42            #+#    #+#              #
-#    Updated: 2021/04/11 14:38:08 by user42           ###   ########.fr        #
+#    Updated: 2021/04/20 13:43:28 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-FROM alpine:3.13.4
+FROM alpine:latest
 
-RUN apk add nginx openrc openssh openssl --no-cache
+RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf \
+	&& apk update \
+	&& apk add openrc openssl wget telegraf php7 mariadb mariadb-client --no-cache
 
 COPY setup.sh /tmp/
-# COPY nginx.conf /etc/nginx/nginx.conf
+CMD sh /tmp/setup.sh
 
 EXPOSE 22 80 443
-
-CMD sh /tmp/setup.sh

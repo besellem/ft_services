@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/04/15 17:31:53 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/20 17:14:06 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -107,12 +107,12 @@ setup() {
 	# whitout this cmd, minikube can't found images built locally
 	eval $(minikube docker-env)
 	
-	for contnr in 'nginx'
-	do
-		echo "# Building $B_RED$contnr...$CLR_COLOR"
-		docker build -t svc_$contnr ./srcs/$contnr
-		echo
-	done
+	# for contnr in 'nginx'
+	# do
+	# 	echo "# Building $B_RED$contnr...$CLR_COLOR"
+	# 	docker build -t svc_$contnr ./srcs/$contnr
+	# 	echo
+	# done
 
 	docker build -t svc_wordpress ./srcs/wordpress --build-arg SERVICE_IP=$SVC_IP
 
