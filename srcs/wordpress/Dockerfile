@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/07 09:17:39 by user42            #+#    #+#              #
-#    Updated: 2021/04/15 17:41:01 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/20 12:46:32 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,6 +30,7 @@ RUN  echo "nameserver 8.8.8.8" > /etc/resolv.conf \
 RUN echo $SERVICE_IP > /tmp/svc_ip
 
 COPY ./srcs /tmp
+RUN mv /tmp/wp-config.php /www
 CMD sh /tmp/setup.sh
 
 EXPOSE 5050
