@@ -6,9 +6,10 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/04/20 17:14:06 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/21 17:07:43 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
 
 # Ansi color codes
 BLACK="\033[0;30m"
@@ -42,6 +43,11 @@ echo "$CLR_SCREEN$B_RED\
 🖥  - $B_YELLOW"$(uname)$CLR_COLOR "\n"
 
 
+
+### whitout this cmd, minikube can't found images built locally
+eval $(minikube docker-env)
+
+
 # Install minikube command
 install_minikube_cmd() {
 	if [ `uname` = Darwin ]
@@ -67,6 +73,14 @@ install_minikube_cmd() {
 				echo "export MINIKUBE_HOME=/goinfre/\$USER/" >> $HOME/.zshrc
 			fi
 		fi
+	elif [ `uname` = Linux ]
+	then
+		if [ ! -x `command -v minikube` ]
+		then
+			echo "'minikube' is not installed in your system"
+		fi
+	else
+		echo "You're not on a good system padawan"
 	fi
 }
 
@@ -89,23 +103,22 @@ start() {
 	minikube addons enable metrics-server
 	minikube addons enable metallb
 
+	## install metallb
 	# On first install only
 	# kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 	# kubectl expose rc example --port=8765 --target-port=9376 --name=example-service --type=LoadBalancer
 	# kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/namespace.yaml
 	# kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/metallb.yaml
 	# kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
-	
-	# open http://$(minikube ip)
 }
 
 
 setup() {
 
-	SVC_IP=$(minikube ip)
-
 	# whitout this cmd, minikube can't found images built locally
-	eval $(minikube docker-env)
+	# eval $(minikube docker-env)
+
+	SVC_IP=$(minikube ip)
 	
 	# for contnr in 'nginx'
 	# do
@@ -114,15 +127,28 @@ setup() {
 	# 	echo
 	# done
 
-	docker build -t svc_wordpress ./srcs/wordpress --build-arg SERVICE_IP=$SVC_IP
+	echo "# Building" $B_RED " images..." $CLR_COLOR
 
-	kubectl create -f ./srcs/nginx/nginx.yaml
-	# kubectl create -f ./srcs/ftps/ftps.yaml
-	# kubectl create -f ./srcs/grafana/grafana.yaml
-	# kubectl create -f ./srcs/influxdb/influxdb.yaml
-	# kubectl create -f ./srcs/mysql/mysql.yaml
-	# kubectl create -f ./srcs/phpmyadmin/phpmyadmin.yaml
-	kubectl create -f ./srcs/wordpress/wordpress.yaml
+	# Build images
+	docker build -t svc_nginx ./srcs/nginx
+	docker build -t svc_wordpress ./srcs/wordpress --build-arg SERVICE_IP=$SVC_IP
+	docker build -t svc_phpmyadmin ./srcs/phpmyadmin
+
+	# Main yaml file
+	kubectl apply -f ./srcs/configmap.yaml
+
+	# All services
+	kubectl apply -f ./srcs/nginx/nginx.yaml
+	kubectl apply -f ./srcs/wordpress/wordpress.yaml
+	kubectl apply -f ./srcs/phpmyadmin/phpmyadmin.yaml
+	
+	# kubectl apply -f ./srcs/ftps/ftps.yaml
+	# kubectl apply -f ./srcs/grafana/grafana.yaml
+	# kubectl apply -f ./srcs/influxdb/influxdb.yaml
+	# kubectl apply -f ./srcs/mysql/mysql.yaml
+
+	# open nginx welcome page in browser
+	open http://$SVC_IP:80
 }
 
 
@@ -133,16 +159,21 @@ then
 	start
 elif [ $1 = "delete" ] || [ $1 = "stop" ]
 then
-	# Delete minikube instances
-	if [ -x `command -v minikube` ]
+	# Delete minikube instances if minikube is running & exist
+	minikube ip > /dev/null 2>&1
+	if [ $? -eq 0 ] && [ -x `command -v minikube` ]
 	then
+		echo "Clearing docker images..."
+		docker rmi --force svc_nginx svc_ftps svc_grafana svc_influxdb svc_mysql svc_phpmyadmin svc_wordpress alpine 2>/dev/null
 		minikube delete
+	else
+		echo "Nothing to delete 🤘"
 	fi
 elif [ $1 = "services" ]
 then
 
-	# check if minikube is working
-	minikube ip
+	# check if minikube is running & exist
+	minikube ip > /dev/null 2>&1
 	if [ $? -ne 0 ]
 	then
 		start

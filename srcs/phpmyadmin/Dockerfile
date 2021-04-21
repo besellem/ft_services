@@ -6,11 +6,14 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/07 09:17:39 by user42            #+#    #+#              #
-#    Updated: 2021/04/20 13:38:08 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/21 17:02:12 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 FROM alpine:latest
+
+COPY ./srcs/config.inc.php /tmp
+COPY ./srcs/setup.sh /tmp
 
 RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf \
 	&& apk update \
@@ -21,11 +24,10 @@ RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf \
 	&& mkdir /www \
 	&& wget https://files.phpmyadmin.net/phpMyAdmin/5.1.0/phpMyAdmin-5.1.0-english.tar.gz -P /www \
 	&& tar -xvf /www/phpMyAdmin-5.1.0-english.tar.gz -C /www \
-	&& mv /www/phpMyAdmin-5.1.0-english phpmyadmin \
-	&& cp config.sample.inc.php config.inc.php \
-	&& rm -rf /www/phpMyAdmin-5.1.0-english.tar.gz
+	&& rm -rf /www/phpMyAdmin-5.1.0-english.tar.gz \
+	&& mv /www/phpMyAdmin-5.1.0-english /www/phpmyadmin \
+	&& mv /tmp/config.inc.php /www/phpmyadmin
 
-COPY setup.sh /tmp/
 CMD sh /tmp/setup.sh
 
 EXPOSE 5000
