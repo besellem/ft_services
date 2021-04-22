@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/04/21 17:07:43 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/22 15:27:32 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -77,19 +77,23 @@ install_minikube_cmd() {
 	then
 		if [ ! -x `command -v minikube` ]
 		then
-			echo "'minikube' is not installed in your system"
+			echo "'minikube' is not installed on your system"
 		fi
 	else
-		echo "You're not on a good system padawan"
+		echo "You cannot run this on your system."
+		echo "Too bad"
 	fi
 }
 
 
+# Start minikube, its addons and metallb
 start() {
 	
 	install_minikube_cmd
 
-	# Launching minikube
+	echo "Starting minikube..."
+	
+	## Launch minikube
 	if [ `uname` = Darwin ]
 	then
 		minikube start --vm-driver=virtualbox --memory=2g --cpus=2 --extra-config=apiserver.service-node-port-range=1-35000
@@ -99,43 +103,36 @@ start() {
 	fi
 
 	minikube addons enable dashboard
-	# minikube addons enable ingress
 	minikube addons enable metrics-server
-	minikube addons enable metallb
+	# minikube addons enable ingress
+	# minikube addons enable metallb
 
-	## install metallb
-	# On first install only
-	# kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
-	# kubectl expose rc example --port=8765 --target-port=9376 --name=example-service --type=LoadBalancer
-	# kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/namespace.yaml
-	# kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/metallb.yaml
-	# kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+	## Install metallb
+	kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/namespace.yaml
+	kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/metallb.yaml
+	
+	# first install only
+	# if [ `kubectl get secrets --namespace metallb-system | grep Opaque` = "" ]
+	# then
+		kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)" > /dev/null
+	# fi
+
+	# Main yaml file
+	kubectl apply -f ./srcs/configmap.yaml
 }
 
 
+# Start all services
 setup() {
-
-	# whitout this cmd, minikube can't found images built locally
-	# eval $(minikube docker-env)
 
 	SVC_IP=$(minikube ip)
 	
-	# for contnr in 'nginx'
-	# do
-	# 	echo "# Building $B_RED$contnr...$CLR_COLOR"
-	# 	docker build -t svc_$contnr ./srcs/$contnr
-	# 	echo
-	# done
-
 	echo "# Building" $B_RED " images..." $CLR_COLOR
 
 	# Build images
 	docker build -t svc_nginx ./srcs/nginx
 	docker build -t svc_wordpress ./srcs/wordpress --build-arg SERVICE_IP=$SVC_IP
 	docker build -t svc_phpmyadmin ./srcs/phpmyadmin
-
-	# Main yaml file
-	kubectl apply -f ./srcs/configmap.yaml
 
 	# All services
 	kubectl apply -f ./srcs/nginx/nginx.yaml
@@ -171,19 +168,15 @@ then
 	fi
 elif [ $1 = "services" ]
 then
-
-	# check if minikube is running & exist
+	# start minikube if not running
 	minikube ip > /dev/null 2>&1
 	if [ $? -ne 0 ]
 	then
 		start
 	fi
-	
-	# Launch services
 	setup
 elif [ $1 = "install" ]
 then
-	# Install minikube
 	install_minikube_cmd
 fi
 

@@ -32,3 +32,79 @@ spec:
   type: ClusterIP
   selector:
     app: mysql
+
+
+
+#############################
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3306
+      targetPort: 3306
+  selector:
+    app: mysql
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pv-mysql
+  labels:
+    app: mysql
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  serviceName: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: svc_mysql
+        imagePullPolicy: Never
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - /root/livenessprobe.sh
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        env:
+          - name: WP_USER_PASS
+            valueFrom:
+              secretKeyRef:
+                name: global-secret
+                key: wp_user_password
+          - name: ADMIN_PASS
+            valueFrom:
+              secretKeyRef:
+                name: global-secret
+                key: maria_admin_pass
+        volumeMounts:
+          - name: mysql
+            mountPath: /var/lib/mysql
+        ports:
+        - containerPort: 3306
+      volumes:
+        - name: mysql
+          persistentVolumeClaim:
+            claimName: pv-mysql
