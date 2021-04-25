@@ -29,7 +29,7 @@ define( 'DB_USER', 'wordpress' );
 define( 'DB_PASSWORD', '' );
 
 /** MySQL hostname */
-define( 'DB_HOST', 'localhost' );
+define( 'DB_HOST', 'mysql' );
 
 define('WP_HOME', 'http://IP_HERE:5050' );
 define('WP_SITEURL', 'http://IP_HERE:5050' );

@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/04/22 15:27:32 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/25 16:32:33 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,11 +45,12 @@ echo "$CLR_SCREEN$B_RED\
 
 
 ### whitout this cmd, minikube can't found images built locally
-eval $(minikube docker-env)
+# eval $(minikube docker-env)
 
 
 # Install minikube command
 install_minikube_cmd() {
+
 	if [ `uname` = Darwin ]
 	then
 		
@@ -62,6 +63,7 @@ install_minikube_cmd() {
 				echo "Installing Homebrew..."
 				/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 			fi
+			brew install kubectl minikube
 		fi
 
 		# if $MINIKUBE_HOME does not exist in .zshrc, add it
@@ -127,7 +129,7 @@ setup() {
 
 	SVC_IP=$(minikube ip)
 	
-	echo "# Building" $B_RED " images..." $CLR_COLOR
+	echo "# Building"$B_RED" images..."$CLR_COLOR
 
 	# Build images
 	docker build -t svc_nginx ./srcs/nginx

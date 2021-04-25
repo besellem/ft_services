@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/07 09:17:39 by user42            #+#    #+#              #
-#    Updated: 2021/04/20 17:16:42 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/25 14:59:53 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,6 +39,4 @@ COPY ./srcs/nginx.conf /etc/nginx/
 COPY ./srcs/setup.sh /tmp
 CMD sh /tmp/setup.sh
 
-EXPOSE 22
-EXPOSE 80
-EXPOSE 443
+EXPOSE 22 80 443
