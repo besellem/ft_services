@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/04/25 16:32:33 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/26 15:19:08 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -104,20 +104,15 @@ start() {
 		minikube start --driver=docker --extra-config=apiserver.service-node-port-range=1-35000
 	fi
 
-	minikube addons enable dashboard
-	minikube addons enable metrics-server
-	# minikube addons enable ingress
-	# minikube addons enable metallb
+	# minikube addons enable dashboard
+	# minikube addons disable metrics-server
+
+	# minikube dashboard
 
 	## Install metallb
 	kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/namespace.yaml
 	kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/metallb.yaml
-	
-	# first install only
-	# if [ `kubectl get secrets --namespace metallb-system | grep Opaque` = "" ]
-	# then
-		kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)" > /dev/null
-	# fi
+	kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)" > /dev/null
 
 	# Main yaml file
 	kubectl apply -f ./srcs/configmap.yaml
@@ -150,6 +145,23 @@ setup() {
 	open http://$SVC_IP:80
 }
 
+install_dashboard()
+{
+    # install kubernetes dashboard
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml
+
+    # show token
+    echo ""$GREEN$CLR_SCREEN":tools:  Plead copy the "Token" code"$CLR_COLOR"\n"
+    kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | awk '/^default-token-/{print $1}') | awk '$1=="token:"{print $2}'
+
+    # open dashboard
+    echo ""$GREEN":tools:  open the dashboard ..."$CLR_COLOR"\n"
+    open http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+
+    # starting dashboard proxy
+    echo ""$GREEN":tools:  Please refresh the dashboard page when you see "Starting to serve on [...] ...""$CLR_COLOR"\n"
+    kubectl proxy
+}
 
 # If no arg, or first arg equals "start" or "restart":
 # Start / Restart script
@@ -179,7 +191,8 @@ then
 	setup
 elif [ $1 = "install" ]
 then
-	install_minikube_cmd
+	# install_minikube_cmd
+	install_dashboard
 fi
 
 # Set env variable when exiting
