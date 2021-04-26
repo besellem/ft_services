@@ -43,24 +43,15 @@ spec:
       - name: mysql
         image: svc_mysql
         imagePullPolicy: Never
-        livenessProbe:
-          exec:
-            command:
-            - /bin/sh
-            - /root/livenessprobe.sh
-          initialDelaySeconds: 5
-          periodSeconds: 5
         env:
-          - name: WP_USER_PASS
-            valueFrom:
-              secretKeyRef:
-                name: global-secret
-                key: wp_user_password
-          - name: ADMIN_PASS
-            valueFrom:
-              secretKeyRef:
-                name: global-secret
-                key: maria_admin_pass
+          - name: MYSQL_ROOT_PASSWORD
+            value: root
+          - name: MYSQL_DATABASE
+            value: wordpress
+          - name: MYSQL_USER
+            value: admin
+          - name: MYSQL_PASS
+            value: admin
         volumeMounts:
           - name: mysql
             mountPath: /var/lib/mysql
