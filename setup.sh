@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/04/26 15:19:08 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/26 17:15:27 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,7 +45,7 @@ echo "$CLR_SCREEN$B_RED\
 
 
 ### whitout this cmd, minikube can't found images built locally
-# eval $(minikube docker-env)
+eval $(minikube docker-env)
 
 
 # Install minikube command
@@ -126,20 +126,27 @@ setup() {
 	
 	echo "# Building"$B_RED" images..."$CLR_COLOR
 
+	for ctnr in 'nginx' 'phpmyadmin' 'mysql'
+	do
+		docker build -t svc_$ctnr ./srcs/$ctnr
+		kubectl apply -f ./srcs/$ctnr/$ctnr.yaml
+	done
+
 	# Build images
-	docker build -t svc_nginx ./srcs/nginx
+	# docker build -t svc_nginx ./srcs/nginx
 	docker build -t svc_wordpress ./srcs/wordpress --build-arg SERVICE_IP=$SVC_IP
-	docker build -t svc_phpmyadmin ./srcs/phpmyadmin
+	# docker build -t svc_phpmyadmin ./srcs/phpmyadmin
+	# docker build -t svc_mysql ./srcs/mysql
 
 	# All services
-	kubectl apply -f ./srcs/nginx/nginx.yaml
+	# kubectl apply -f ./srcs/nginx/nginx.yaml
 	kubectl apply -f ./srcs/wordpress/wordpress.yaml
-	kubectl apply -f ./srcs/phpmyadmin/phpmyadmin.yaml
+	# kubectl apply -f ./srcs/phpmyadmin/phpmyadmin.yaml
+	# kubectl apply -f ./srcs/mysql/mysql.yaml
 	
 	# kubectl apply -f ./srcs/ftps/ftps.yaml
 	# kubectl apply -f ./srcs/grafana/grafana.yaml
 	# kubectl apply -f ./srcs/influxdb/influxdb.yaml
-	# kubectl apply -f ./srcs/mysql/mysql.yaml
 
 	# open nginx welcome page in browser
 	open http://$SVC_IP:80
