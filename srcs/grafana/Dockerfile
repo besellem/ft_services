@@ -1,23 +1,29 @@
-#!/bin/sh
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
 #    Dockerfile                                         :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
+#    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/07 09:17:39 by user42            #+#    #+#              #
-#    Updated: 2021/04/11 14:38:08 by user42           ###   ########.fr        #
+#    Updated: 2021/04/27 17:02:23 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-FROM alpine:3.13.4
+FROM alpine:latest
 
-RUN apk add nginx openrc openssh openssl --no-cache
+VOLUME /sys/fs/cgroup
 
-COPY setup.sh /tmp/
-# COPY nginx.conf /etc/nginx/nginx.conf
+RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf \
+	&& apk update && apk add wget openrc openssh openssl php7 telegraf --no-cache \
+	&& apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main libc6-compat \
+	&& wget https://dl.grafana.com/oss/release/grafana-6.7.2.linux-amd64.tar.gz \
+	&& tar -zxvf grafana-6.7.2.linux-amd64.tar.gz \
+	&& rm -rf grafana-6.7.2.linux-amd64.tar.gz
 
-EXPOSE 22 80 443
+RUN mkdir -p /etc/telegraf
 
+COPY ./srcs/setup.sh /tmp/
 CMD sh /tmp/setup.sh
+
+EXPOSE 3000

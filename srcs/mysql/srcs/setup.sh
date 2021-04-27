@@ -1,28 +1,5 @@
 #!/bin/sh
 
-
-# openrc boot
-# /etc/init.d/mariadb setup &>/dev/null
-# /tmp/boot_mysql.sh > /dev/null 2>&1 &
-
-# until mysql
-# do
-# 	echo "mysql is booting..."
-# done
-
-# echo "CREATE DATABASE wordpress;"| mysql -u root --skip-password
-# echo "GRANT ALL PRIVILEGES ON wordpress.* TO 'root'@'localhost' WITH GRANT OPTION;"| mysql -u root --skip-password
-# echo "FLUSH PRIVILEGES;"| mysql -u root --skip-password
-# echo "update mysql.user set plugin='' where user='root';"| mysql -u root --skip-password
-
-# openrc boot
-# /etc/init.d/mariadb setup &>/dev/null
-# /usr/bin/mysqld_safe --datadir='/var/lib/mysql'
-# /etc/init.d/mariadb setup
-# myslq
-# mysql
-# /usr/bin/mysqld_safe --datadir='/var/lib/mysql' &
-
 openrc boot
 touch /run/openrc/softlevel
 
@@ -44,6 +21,7 @@ echo "CREATE USER 'admin'@'%' IDENTIFIED BY '$ADMIN_PASS';" | mysql -u root
 echo "GRANT ALL PRIVILEGES ON *.* to 'admin'@'%' WITH GRANT OPTION;" | mysql -u root
 echo "FLUSH PRIVILEGES" | mysql -u root
 
+# add wordpress template database (avoid the pain in the ass of doing the config manually)
+mysql -u root "wordpress" < /tmp/wordpress.sql
 
 tail -f /dev/null
-# sh

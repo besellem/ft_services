@@ -6,14 +6,11 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/07 09:17:39 by user42            #+#    #+#              #
-#    Updated: 2021/04/27 15:07:23 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/27 16:51:08 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 FROM alpine:latest
-
-# Get ip
-# ARG SERVICE_IP
 
 RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf \
 	&& apk update \
@@ -26,8 +23,6 @@ RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf \
 	&& tar -xvf /www/latest.tar.gz -C /www \
 	&& cp -a /www/wordpress/. /www \
 	&& rm -rf /www/latest.tar.gz /www/wordpress/
-
-# RUN echo $SERVICE_IP > /tmp/svc_ip
 
 COPY ./srcs /tmp
 RUN mv /tmp/wp-config.php /www

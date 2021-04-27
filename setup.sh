@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/04/27 15:13:04 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/27 16:51:23 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -167,9 +167,6 @@ setup() {
 		docker build -t svc_$ctnr ./srcs/$ctnr
 		kubectl apply -f ./srcs/$ctnr/$ctnr.yaml
 	done
-
-	# Build images
-	# docker build -t svc_wordpress ./srcs/wordpress --build-arg SERVICE_IP=$SVC_IP
 
 	# apply yamls
 	# kubectl apply -f ./srcs/ftps/ftps.yaml
