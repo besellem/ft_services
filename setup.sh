@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/04/26 17:15:27 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/27 15:13:04 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,7 +45,7 @@ echo "$CLR_SCREEN$B_RED\
 
 
 ### whitout this cmd, minikube can't found images built locally
-eval $(minikube docker-env)
+# eval $(minikube docker-env)
 
 
 # Install minikube command
@@ -118,57 +118,70 @@ start() {
 	kubectl apply -f ./srcs/configmap.yaml
 }
 
+# Launch dashboard
+install_dashboard()
+{
+	# install kubernetes dashboard
+	kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml 2>/dev/null 1>&2
+
+	# create admin token
+	if ! kubectl -n kube-system describe secret | grep admin-token 2>/dev/null 1>&2 ; then
+		echo ""$GREEN"\n:tools:  create admin token ..."$CLR_COLOR"\n\n"
+		kubectl create -f ./srcs/admin-token.yaml
+	fi
+
+	# show token
+	echo ""$GREEN$CLR_SCREEN":tools:  Plead copy the "Token" code to connect dashboard"$CLR_COLOR"\n"
+	kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | awk '/^admin-token-/{print $1}') | awk '$1=="token:"{print $2}'
+
+	# open dashboard
+	echo ""$GREEN"\n:tools:  open the dashboard ..."$CLR_COLOR"\n"
+	if [ `uname` = Linux ]
+	then
+		xdg-open http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+	else
+		open http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+	fi
+
+	# starting dashboard proxy
+	echo ""$GREEN":tools:  Please refresh the dashboard page when you see "Starting to serve on [...] ...""$CLR_COLOR"\n"
+	kubectl proxy
+
+	# TIPS 1 : if the dashboard page shows nothing, try add "login" like [...]/proxy/#/login or just change browser
+	# TIPS 2 : if you can't log in to the dashboard, try wipe off "login" like [...]/proxy/#/
+}
+
 
 # Start all services
 setup() {
+
+	### whitout this cmd, minikube can't found images built locally
+	eval $(minikube docker-env)
 
 	SVC_IP=$(minikube ip)
 	
 	echo "# Building"$B_RED" images..."$CLR_COLOR
 
-	for ctnr in 'nginx' 'phpmyadmin' 'mysql'
+	for ctnr in 'nginx' 'wordpress' 'phpmyadmin' 'mysql'
 	do
 		docker build -t svc_$ctnr ./srcs/$ctnr
 		kubectl apply -f ./srcs/$ctnr/$ctnr.yaml
 	done
 
 	# Build images
-	# docker build -t svc_nginx ./srcs/nginx
-	docker build -t svc_wordpress ./srcs/wordpress --build-arg SERVICE_IP=$SVC_IP
-	# docker build -t svc_phpmyadmin ./srcs/phpmyadmin
-	# docker build -t svc_mysql ./srcs/mysql
+	# docker build -t svc_wordpress ./srcs/wordpress --build-arg SERVICE_IP=$SVC_IP
 
-	# All services
-	# kubectl apply -f ./srcs/nginx/nginx.yaml
-	kubectl apply -f ./srcs/wordpress/wordpress.yaml
-	# kubectl apply -f ./srcs/phpmyadmin/phpmyadmin.yaml
-	# kubectl apply -f ./srcs/mysql/mysql.yaml
-	
+	# apply yamls
 	# kubectl apply -f ./srcs/ftps/ftps.yaml
 	# kubectl apply -f ./srcs/grafana/grafana.yaml
 	# kubectl apply -f ./srcs/influxdb/influxdb.yaml
 
+	install_dashboard
+	
 	# open nginx welcome page in browser
-	open http://$SVC_IP:80
+	# open http://$SVC_IP:80
 }
 
-install_dashboard()
-{
-    # install kubernetes dashboard
-    kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml
-
-    # show token
-    echo ""$GREEN$CLR_SCREEN":tools:  Plead copy the "Token" code"$CLR_COLOR"\n"
-    kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | awk '/^default-token-/{print $1}') | awk '$1=="token:"{print $2}'
-
-    # open dashboard
-    echo ""$GREEN":tools:  open the dashboard ..."$CLR_COLOR"\n"
-    open http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
-
-    # starting dashboard proxy
-    echo ""$GREEN":tools:  Please refresh the dashboard page when you see "Starting to serve on [...] ...""$CLR_COLOR"\n"
-    kubectl proxy
-}
 
 # If no arg, or first arg equals "start" or "restart":
 # Start / Restart script

@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/07 09:17:39 by user42            #+#    #+#              #
-#    Updated: 2021/04/25 14:59:53 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/27 14:59:23 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,6 +31,8 @@ COPY ./srcs/welcome /serv
 
 # SSL certificate generation
 RUN openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -out /etc/ssl/certs/serv.crt -keyout /etc/ssl/certs/serv.key -subj "/C=FR/ST=Paris/L=Paris/O=42/OU=ben/CN=website"
+
+RUN mkdir /run/nginx
 
 # Nginx server config
 COPY ./srcs/nginx.conf /etc/nginx/

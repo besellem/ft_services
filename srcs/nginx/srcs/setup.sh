@@ -1,7 +1,8 @@
 #!/bin/sh
 
 openrc boot
-rc-service nginx start
+touch /run/openrc/softlevel
+service nginx restart
 
 # /usr/sbin/sshd
 # nginx -g 'daemon off;'

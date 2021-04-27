@@ -25,6 +25,8 @@ metadata:
   name: wordpress
   labels:
     app: wordpress
+  annotations:
+    metallb.universe.tf/allow-shared-ip: universal-ip
 spec:
   type: LoadBalancer
   selector:
