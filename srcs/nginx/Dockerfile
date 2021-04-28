@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/07 09:17:39 by user42            #+#    #+#              #
-#    Updated: 2021/04/27 16:37:42 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/28 13:10:21 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,12 @@ RUN chown -R www:www /var/lib/nginx
 COPY ./srcs/welcome /serv
 
 # SSH
-# RUN ssh-keygen -A
+RUN sed -i "s/#PermitRootLogin.*/PermitRootLogin yes/g" /etc/ssh/sshd_config && \
+    ssh-keygen -t dsa -P "" -f /etc/ssh/ssh_host_dsa_key && \
+    ssh-keygen -t rsa -P "" -f /etc/ssh/ssh_host_rsa_key && \
+    ssh-keygen -t ecdsa -P "" -f /etc/ssh/ssh_host_ecdsa_key && \
+    ssh-keygen -t ed25519 -P "" -f /etc/ssh/ssh_host_ed25519_key && \
+    echo "root:admin" | chpasswd
 
 # SSL certificate generation
 RUN openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -out /etc/ssl/certs/serv.crt -keyout /etc/ssl/certs/serv.key -subj "/C=FR/ST=Paris/L=Paris/O=42/OU=ben/CN=website"
@@ -39,6 +44,7 @@ COPY ./srcs/nginx.conf /etc/nginx/
 
 # Copy & Run script
 COPY ./srcs/setup.sh /tmp
-CMD sh /tmp/setup.sh
 
 EXPOSE 22 80 443
+
+CMD sh /tmp/setup.sh
