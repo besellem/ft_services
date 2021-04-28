@@ -26,6 +26,7 @@ openrc boot
 # service vsftpd start
 
 # sh
-sleep infinite
+pure-ftpd -p 21000:21000 -P 192.168.99.100 # ip to change
+# sleep infinite
 
 # /usr/sbin/vsftpd
