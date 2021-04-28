@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/04/27 16:51:23 by besellem         ###   ########.fr        #
+#    Updated: 2021/04/28 14:50:34 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -165,8 +165,13 @@ setup() {
 	for ctnr in 'nginx' 'wordpress' 'phpmyadmin' 'mysql'
 	do
 		docker build -t svc_$ctnr ./srcs/$ctnr
+	done
+
+	for ctnr in 'nginx' 'wordpress' 'phpmyadmin' 'mysql'
+	do
 		kubectl apply -f ./srcs/$ctnr/$ctnr.yaml
 	done
+
 
 	# apply yamls
 	# kubectl apply -f ./srcs/ftps/ftps.yaml
