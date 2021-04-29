@@ -2,8 +2,7 @@
 
 # adduser -D "adm"
 # echo "adm:adm" | chpasswd
-
-{ echo 'password'; echo 'password'; } | adduser ftps_user
+{ echo "password"; echo "password"; } | adduser ftps_user
 
 # touch /run/openrc/softlevel
 
