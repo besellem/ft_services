@@ -13,11 +13,17 @@ spec:
     metadata:
       labels:
         app: ftps
+        run: ftps
     spec:
       containers:
       - name: ftps
         image: svc_ftps
         imagePullPolicy: Never
+        ports:
+        - containerPort: 21
+          name: ftps
+        - containerPort: 40000
+          name: ftps-pasv
 ---
 apiVersion: v1
 kind: Service
@@ -37,3 +43,28 @@ spec:
     port: 21
     targetPort: 21
     nodePort: 21
+  - name: ftps-pasv0
+    protocol: TCP
+    port: 20000
+    targetPort: 20000
+    nodePort: 20000
+  - name: ftps-pasv1
+    protocol: TCP
+    port: 20001
+    targetPort: 20001
+    nodePort: 20001
+  - name: ftps-pasv2
+    protocol: TCP
+    port: 20002
+    targetPort: 20002
+    nodePort: 20002
+  - name: ftps-pasv3
+    protocol: TCP
+    port: 20003
+    targetPort: 20003
+    nodePort: 20003
+  - name: ftps-pasv4
+    protocol: TCP
+    port: 20004
+    targetPort: 20004
+    nodePort: 20004
