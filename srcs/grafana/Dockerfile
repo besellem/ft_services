@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/07 09:17:39 by user42            #+#    #+#              #
-#    Updated: 2021/04/27 17:02:23 by besellem         ###   ########.fr        #
+#    Updated: 2021/05/09 14:35:03 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,9 @@ RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf \
 RUN mkdir -p /etc/telegraf
 
 COPY ./srcs/setup.sh /tmp/
-CMD sh /tmp/setup.sh
+
+COPY ./srcs/grafana.db /grafana-6.7.2/data/
 
 EXPOSE 3000
+
+CMD sh /tmp/setup.sh

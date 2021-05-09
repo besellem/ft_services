@@ -18,6 +18,11 @@ spec:
       - name: nginx
         image: svc_nginx
         imagePullPolicy: Never
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - /tmp/liveness.sh
 ---
 apiVersion: v1
 kind: Service

@@ -57,6 +57,11 @@ spec:
             mountPath: /var/lib/mysql
         ports:
         - containerPort: 3306
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - /tmp/liveness.sh
       volumes:
         - name: mysql
           persistentVolumeClaim:

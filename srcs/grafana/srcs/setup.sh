@@ -2,6 +2,6 @@
 
 # openrc boot
 
-# Server
-# php -S 0.0.0.0:3000 -t /www/phpmyadmin
-sh
+cd /grafana-6.7.2/bin/ && ./grafana-server
+
+# sleep infinite

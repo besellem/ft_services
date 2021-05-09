@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/07 09:17:39 by user42            #+#    #+#              #
-#    Updated: 2021/04/28 15:15:57 by besellem         ###   ########.fr        #
+#    Updated: 2021/05/09 14:59:39 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,5 +45,6 @@ COPY ./srcs/nginx.conf /etc/nginx/
 EXPOSE 22 80 443
 
 # Copy & Run script
+COPY ./srcs/liveness.sh /tmp
 COPY ./srcs/setup.sh /tmp
 CMD sh /tmp/setup.sh
