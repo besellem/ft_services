@@ -13,8 +13,9 @@ spec:
         app: influxdb
     spec:
       containers:
-        - image: influxdb:1.7.4
+        - image: svc_influxdb
           name: influxdb
+          imagePullPolicy: Never
           ports:
             - containerPort: 8086
           volumeMounts:

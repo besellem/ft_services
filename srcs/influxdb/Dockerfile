@@ -11,13 +11,13 @@
 #                                                                              #
 # **************************************************************************** #
 
-FROM alpine:3.13.4
+FROM alpine:latest
 
-RUN apk add nginx openrc openssh openssl --no-cache
+RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf \
+	&& apk update && apk add wget openrc telegraf --no-cache
 
-COPY setup.sh /tmp/
-# COPY nginx.conf /etc/nginx/nginx.conf
+COPY ./srcs/setup.sh /tmp/
 
-EXPOSE 22 80 443
+EXPOSE 8086
 
 CMD sh /tmp/setup.sh
