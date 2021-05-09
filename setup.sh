@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/04/28 14:50:34 by besellem         ###   ########.fr        #
+#    Updated: 2021/05/09 12:46:03 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -118,9 +118,8 @@ start() {
 	kubectl apply -f ./srcs/configmap.yaml
 }
 
-# Launch dashboard
-install_dashboard()
-{
+# Launch dashboard (thanks @kaye)
+install_dashboard() {
 	# install kubernetes dashboard
 	kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml 2>/dev/null 1>&2
 
@@ -162,19 +161,17 @@ setup() {
 	
 	echo "# Building"$B_RED" images..."$CLR_COLOR
 
-	for ctnr in 'nginx' 'wordpress' 'phpmyadmin' 'mysql'
+	for ctnr in 'nginx' 'wordpress' 'phpmyadmin' 'mysql' 'ftps'
 	do
 		docker build -t svc_$ctnr ./srcs/$ctnr
 	done
 
-	for ctnr in 'nginx' 'wordpress' 'phpmyadmin' 'mysql'
+	for ctnr in 'nginx' 'wordpress' 'phpmyadmin' 'mysql' 'ftps'
 	do
 		kubectl apply -f ./srcs/$ctnr/$ctnr.yaml
 	done
 
-
 	# apply yamls
-	# kubectl apply -f ./srcs/ftps/ftps.yaml
 	# kubectl apply -f ./srcs/grafana/grafana.yaml
 	# kubectl apply -f ./srcs/influxdb/influxdb.yaml
 

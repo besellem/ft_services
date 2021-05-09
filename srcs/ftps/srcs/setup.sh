@@ -1,12 +1,7 @@
 #!/bin/sh
 
-# adduser -D "adm"
-# echo "adm:adm" | chpasswd
-{ echo "password"; echo "password"; } | adduser ftps_user
-
-# touch /run/openrc/softlevel
+adduser -D "admin"
+echo "admin:admin" | chpasswd
 
 openrc boot
-
 vsftpd /etc/vsftpd/vsftpd.conf
-sleep infinite
