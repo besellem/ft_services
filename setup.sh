@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/05/09 12:46:03 by besellem         ###   ########.fr        #
+#    Updated: 2021/05/10 15:15:48 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -116,6 +116,13 @@ start() {
 
 	# Main yaml file
 	kubectl apply -f ./srcs/configmap.yaml
+
+	# creds for influxdb
+	# kubectl create secret generic influxdb-creds \
+	# 	--from-literal=INFLUXDB_DATABASE=local_monitoring \
+	# 	--from-literal=INFLUXDB_USERNAME=root \
+	# 	--from-literal=INFLUXDB_PASSWORD=root1234 \
+	# 	--from-literal=INFLUXDB_HOST=influxdb
 }
 
 # Launch dashboard (thanks @kaye)
@@ -161,12 +168,12 @@ setup() {
 	
 	echo "# Building"$B_RED" images..."$CLR_COLOR
 
-	for ctnr in 'nginx' 'wordpress' 'phpmyadmin' 'mysql' 'ftps'
+	for ctnr in 'nginx' 'wordpress' 'phpmyadmin' 'mysql' 'ftps' 'grafana' 'influxdb'
 	do
 		docker build -t svc_$ctnr ./srcs/$ctnr
 	done
 
-	for ctnr in 'nginx' 'wordpress' 'phpmyadmin' 'mysql' 'ftps'
+	for ctnr in 'nginx' 'wordpress' 'phpmyadmin' 'mysql' 'ftps' 'grafana' 'influxdb'
 	do
 		kubectl apply -f ./srcs/$ctnr/$ctnr.yaml
 	done

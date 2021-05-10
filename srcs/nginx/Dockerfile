@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/07 09:17:39 by user42            #+#    #+#              #
-#    Updated: 2021/05/09 14:59:39 by besellem         ###   ########.fr        #
+#    Updated: 2021/05/10 15:19:37 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,6 +41,10 @@ RUN mkdir /run/nginx
 
 # Nginx server config
 COPY ./srcs/nginx.conf /etc/nginx/
+
+# telegraf
+COPY ./srcs/telegraf.conf /etc/telegraf.conf
+COPY ./srcs/telegraf.conf /etc/telegraf.conf.d/telegraf.conf
 
 EXPOSE 22 80 443
 

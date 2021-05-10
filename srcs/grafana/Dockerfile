@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/07 09:17:39 by user42            #+#    #+#              #
-#    Updated: 2021/05/09 14:35:03 by besellem         ###   ########.fr        #
+#    Updated: 2021/05/10 15:19:17 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,9 @@ RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf \
 	&& tar -zxvf grafana-6.7.2.linux-amd64.tar.gz \
 	&& rm -rf grafana-6.7.2.linux-amd64.tar.gz
 
-RUN mkdir -p /etc/telegraf
+# telegraf
+COPY ./srcs/telegraf.conf /etc/telegraf.conf
+COPY ./srcs/telegraf.conf /etc/telegraf.conf.d/telegraf.conf
 
 COPY ./srcs/setup.sh /tmp/
 
