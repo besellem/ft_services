@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/07 09:17:39 by user42            #+#    #+#              #
-#    Updated: 2021/04/27 16:51:08 by besellem         ###   ########.fr        #
+#    Updated: 2021/05/10 16:04:07 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,6 +23,10 @@ RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf \
 	&& tar -xvf /www/latest.tar.gz -C /www \
 	&& cp -a /www/wordpress/. /www \
 	&& rm -rf /www/latest.tar.gz /www/wordpress/
+
+# telegraf
+COPY ./srcs/telegraf.conf /etc/telegraf.conf
+COPY ./srcs/telegraf.conf /etc/telegraf.conf.d/telegraf.conf
 
 COPY ./srcs /tmp
 RUN mv /tmp/wp-config.php /www

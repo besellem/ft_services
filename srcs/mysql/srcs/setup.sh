@@ -24,4 +24,6 @@ echo "FLUSH PRIVILEGES" | mysql -u root
 # add wordpress template database (avoid the pain in the ass of doing the config manually)
 mysql -u root "wordpress" < /tmp/wordpress.sql
 
+service telegraf restart
+
 tail -f /dev/null

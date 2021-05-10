@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/07 09:17:39 by user42            #+#    #+#              #
-#    Updated: 2021/04/21 17:02:12 by besellem         ###   ########.fr        #
+#    Updated: 2021/05/10 16:03:56 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,10 @@ RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf \
 	&& mv /www/phpMyAdmin-5.1.0-english /www/phpmyadmin \
 	&& mv /tmp/config.inc.php /www/phpmyadmin
 
-CMD sh /tmp/setup.sh
+# telegraf
+COPY ./srcs/telegraf.conf /etc/telegraf.conf
+COPY ./srcs/telegraf.conf /etc/telegraf.conf.d/telegraf.conf
 
 EXPOSE 5000
+
+CMD sh /tmp/setup.sh
