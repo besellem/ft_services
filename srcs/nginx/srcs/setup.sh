@@ -7,7 +7,7 @@ service sshd start
 
 # nginx -g 'daemon off;'
 
-service telegraf restart
+# service telegraf restart
 
 # to remove
 sleep infinite
