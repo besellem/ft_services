@@ -5,9 +5,6 @@ touch /run/openrc/softlevel
 service nginx start
 service sshd start
 
-# nginx -g 'daemon off;'
+telegraf --config /etc/telegraf.conf
 
-# service telegraf restart
-
-# to remove
-sleep infinite
+# sleep infinite

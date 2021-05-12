@@ -5,6 +5,6 @@ echo "admin:admin" | chpasswd
 
 openrc
 
-# service telegraf restart
+telegraf --config /etc/telegraf.conf &
 
 vsftpd /etc/vsftpd/vsftpd.conf

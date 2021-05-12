@@ -12,7 +12,7 @@ service influxdb start
 # influx -execute "create database grafana"
 influx -execute "create database influxdb"
 
-# service telegraf restart
+telegraf --config /etc/telegraf.conf
 
 # influxd
-sleep infinite
+# sleep infinite

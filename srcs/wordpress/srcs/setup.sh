@@ -3,7 +3,7 @@
 openrc
 touch /run/openrc/softlevel
 
-# service telegraf restart
+telegraf --config /etc/telegraf.conf &
 
 # Server
 php -S 0.0.0.0:5050 -t /www/

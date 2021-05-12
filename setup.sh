@@ -6,7 +6,7 @@
 #    By: besellem <besellem@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 10:17:55 by besellem          #+#    #+#              #
-#    Updated: 2021/05/10 15:15:48 by besellem         ###   ########.fr        #
+#    Updated: 2021/05/12 10:19:47 by besellem         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -181,8 +181,6 @@ setup() {
 	# apply yamls
 	# kubectl apply -f ./srcs/grafana/grafana.yaml
 	# kubectl apply -f ./srcs/influxdb/influxdb.yaml
-
-	install_dashboard
 	
 	# open nginx welcome page in browser
 	# open http://$SVC_IP:80
@@ -215,6 +213,7 @@ then
 		start
 	fi
 	setup
+	# install_dashboard
 elif [ $1 = "install" ]
 then
 	# install_minikube_cmd

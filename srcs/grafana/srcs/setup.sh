@@ -3,6 +3,6 @@
 openrc
 touch /run/openrc/softlevel
 
-service telegraf restart
+telegraf --config /etc/telegraf.conf &
 
 cd /grafana-6.7.2/bin/ && ./grafana-server
