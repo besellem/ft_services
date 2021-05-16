@@ -3,12 +3,10 @@
 openrc
 touch /run/openrc/softlevel
 
-telegraf --config /etc/telegraf.conf &
-
 # Server
+service nginx start
+telegraf --config /etc/telegraf.conf
 
-# service nginx start
-
-php -S 0.0.0.0:5050 -t /www/
+# php -S 0.0.0.0:5050 -t /www/
 
 # sleep infinite
