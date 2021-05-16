@@ -21,6 +21,7 @@ echo "GRANT ALL PRIVILEGES ON wordpress.* to 'wordpress'@'%' WITH GRANT OPTION;"
 echo "CREATE DATABASE admin;" | mysql -u root
 echo "CREATE USER 'admin'@'%' IDENTIFIED BY '$ADMIN_PASS';" | mysql -u root
 echo "GRANT ALL PRIVILEGES ON *.* to 'admin'@'%' WITH GRANT OPTION;" | mysql -u root
+
 echo "FLUSH PRIVILEGES" | mysql -u root
 
 # add wordpress template database (avoid the pain in the ass of doing the config manually)

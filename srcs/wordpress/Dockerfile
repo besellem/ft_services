@@ -28,6 +28,10 @@ RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf \
 COPY ./srcs/telegraf.conf /etc/telegraf.conf
 COPY ./srcs/telegraf.conf /etc/telegraf.conf.d/telegraf.conf
 
+RUN mkdir /run/nginx
+RUN rm -f /etc/nginx/http.d/default.conf
+COPY ./srcs/nginx.conf /etc/nginx/http.d/
+
 COPY ./srcs /tmp
 RUN mv /tmp/wp-config.php /www
 CMD sh /tmp/setup.sh
