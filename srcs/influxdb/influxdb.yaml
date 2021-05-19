@@ -48,6 +48,11 @@ spec:
             mountPath: /var/lib/influxdb
         ports:
         - containerPort: 8086
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - /tmp/liveness.sh
       volumes:
         - name: influxdb
           persistentVolumeClaim:

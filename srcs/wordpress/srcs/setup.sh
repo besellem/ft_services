@@ -7,5 +7,3 @@ touch /run/openrc/softlevel
 service nginx start
 php-fpm7
 telegraf --config /etc/telegraf.conf
-
-# sleep infinite

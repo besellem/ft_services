@@ -32,8 +32,10 @@ RUN mkdir /run/nginx
 RUN rm -f /etc/nginx/http.d/default.conf
 COPY ./srcs/nginx.conf /etc/nginx/http.d/
 
-COPY ./srcs /tmp
-RUN mv /tmp/wp-config.php /www
-CMD sh /tmp/setup.sh
+COPY ./srcs/wp-config.php /www
 
 EXPOSE 5050
+
+COPY ./srcs/liveness.sh /tmp
+COPY ./srcs/setup.sh /tmp/
+CMD sh /tmp/setup.sh

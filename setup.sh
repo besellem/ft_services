@@ -119,42 +119,34 @@ start() {
 
 # Launch dashboard (thanks to @kaye)
 install_dashboard() {
-	if [ `uname` = Darwin ]
-	then
-		# install kubernetes dashboard
-		kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml 2>/dev/null 1>&2
+	# install kubernetes dashboard
+	kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml 2>/dev/null 1>&2
 
-		# create admin token
-		if ! kubectl -n kube-system describe secret | grep admin-token 2>/dev/null 1>&2 ; then
-			echo ""$GREEN"\n:tools:  create admin token ..."$CLR_COLOR"\n\n"
-			kubectl create -f ./srcs/admin-token.yaml
-		fi
-
-		# show token
-		echo ""$GREEN$CLR_SCREEN":tools:  Plead copy the "Token" code to connect dashboard"$CLR_COLOR"\n"
-		kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | awk '/^admin-token-/{print $1}') | awk '$1=="token:"{print $2}'
-
-		# open dashboard
-		echo ""$GREEN"\n:tools:  open the dashboard ..."$CLR_COLOR"\n"
-		if [ `uname` = Linux ]
-		then
-			xdg-open http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
-		else
-			open http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
-		fi
-
-		# starting dashboard proxy
-		echo ""$GREEN":tools:  Please refresh the dashboard page when you see "Starting to serve on [...] ...""$CLR_COLOR"\n"
-		kubectl proxy
-
-		# TIPS 1 : if the dashboard page shows nothing, try add "login" like [...]/proxy/#/login or just change browser
-		# TIPS 2 : if you can't log in to the dashboard, try wipe off "login" like [...]/proxy/#/
-
-	elif [ `uname` = Linux ]
-	then
-		minikube addons enable dashboard
-		minikube dashboard
+	# create admin token
+	if ! kubectl -n kube-system describe secret | grep admin-token 2>/dev/null 1>&2 ; then
+		echo ""$GREEN"\n:tools:  create admin token ..."$CLR_COLOR"\n\n"
+		kubectl create -f ./srcs/admin-token.yaml
 	fi
+
+	# show token
+	echo ""$GREEN$CLR_SCREEN":tools: Plead copy the "Token" code to connect dashboard"$CLR_COLOR"\n"
+	kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | awk '/^admin-token-/{print $1}') | awk '$1=="token:"{print $2}'
+
+	# open dashboard
+	echo ""$GREEN"\n:tools: open the dashboard ..."$CLR_COLOR"\n"
+	if [ `uname` = Linux ]
+	then
+		xdg-open http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+	else
+		open http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+	fi
+
+	# starting dashboard proxy
+	echo ""$GREEN":tools:  Please refresh the dashboard page when you see "Starting to serve on [...] ...""$CLR_COLOR"\n"
+	kubectl proxy
+
+	# TIPS 1 : if the dashboard page shows nothing, try add "login" like [...]/proxy/#/login or just change browser
+	# TIPS 2 : if you can't log in to the dashboard, try wipe off "login" like [...]/proxy/#/
 }
 
 
