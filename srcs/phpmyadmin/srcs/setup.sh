@@ -3,7 +3,7 @@
 openrc
 touch /run/openrc/softlevel
 
-telegraf --config /etc/telegraf.conf &
-
 # Server
-php -S 0.0.0.0:5000 -t /www/phpmyadmin
+service nginx start
+php-fpm7
+telegraf --config /etc/telegraf.conf

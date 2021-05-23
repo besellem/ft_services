@@ -13,11 +13,10 @@
 FROM alpine:latest
 
 COPY ./srcs/config.inc.php /tmp
-COPY ./srcs/setup.sh /tmp
 
 RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf \
 	&& apk update \
-	&& apk add openrc openssl wget telegraf \
+	&& apk add openrc openssl nginx wget telegraf \
 		php7 php7-fpm php7-opcache php7-gd php7-mysqli \
 		php7-zlib php7-curl php7-mbstring php7-json \
 		php7-session php7-iconv php7-xml --no-cache \
@@ -32,6 +31,12 @@ RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf \
 COPY ./srcs/telegraf.conf /etc/telegraf.conf
 COPY ./srcs/telegraf.conf /etc/telegraf.conf.d/telegraf.conf
 
+RUN mkdir /run/nginx
+RUN rm -f /etc/nginx/http.d/default.conf
+COPY ./srcs/nginx.conf /etc/nginx/http.d/
+
 EXPOSE 5000
 
+COPY ./srcs/liveness.sh /tmp
+COPY ./srcs/setup.sh /tmp
 CMD sh /tmp/setup.sh
