@@ -119,6 +119,9 @@ start() {
 
 # Launch dashboard (thanks to @kaye)
 install_dashboard() {
+
+	eval $(minikube docker-env)
+
 	# install kubernetes dashboard
 	kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml 2>/dev/null 1>&2
 
